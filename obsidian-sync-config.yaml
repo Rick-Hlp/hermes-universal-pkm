@@ -1,0 +1,202 @@
+# Hermes Universal PKM - 共享配置文件
+# 位置：Obsidian Vault/99 System/sync-config.yaml
+# 用途：所有系统（Hermes/OpenClaw/手动）统一读取
+
+pkm_version: "3.0.0"
+description: "Universal PKM 共享配置 - 统一分类规则和目录结构"
+
+# 目录结构定义
+structure:
+  inbox:
+    path: "00 Inbox"
+    description: "快速捕获，任何临时内容"
+  
+  assets:
+    path: "10 Assets"
+    description: "数字资产：账号、订阅、凭证、设备"
+    subdirs:
+      accounts: { description: "各类账号", pattern: "账号|用户名|登录" }
+      subscriptions: { description: "订阅服务", pattern: "订阅|付费|到期|年费|月费" }
+      devices: { description: "设备配置", pattern: "设备|电脑|手机|服务器" }
+      licenses: { description: "软件授权", pattern: "授权|许可证|License" }
+  
+  resources:
+    path: "20 Resources"
+    description: "外部资源：技能、项目、工具、文章"
+    subdirs:
+      skills:
+        description: "技能/方法论"
+        pattern: "skill|技能|方法|框架|流程"
+        subdirs: ["guides", "issues", "improvements", "backups"]
+      projects:
+        description: "开源项目/仓库"
+        pattern: "github.com|项目|仓库|repo"
+      tools:
+        description: "软件/工具/服务"
+        pattern: "工具|软件|服务|app|CLI|GUI"
+      articles:
+        description: "文章/教程/书籍"
+        pattern: "文章|教程|博客|书|阅读"
+  
+  thoughts:
+    path: "30 Thoughts"
+    description: "内部想法：闪念、洞察、日记"
+    subdirs:
+      fleeting: { description: "闪念（快速记录）", pattern: "想法|灵感|突然|想到" }
+      permanent: { description: "永久笔记（已整理）", pattern: "" }
+      insights: { description: "洞察（深度思考）", pattern: "发现|总结|顿悟|洞察" }
+      journals: { description: "日记/反思", pattern: "日记|反思|复盘|今天" }
+  
+  projects:
+    path: "40 Projects"
+    description: "当前项目（有截止时间）"
+    subdirs: {}  # 动态创建
+  
+  areas:
+    path: "50 Areas"
+    description: "责任领域（长期维护）"
+    subdirs:
+      work: { description: "工作相关" }
+      learning: { description: "学习成长" }
+      health: { description: "健康" }
+      finance: { description: "财务" }
+  
+  archives:
+    path: "60 Archives"
+    description: "归档（完成或过期）"
+    subdirs:
+      completed: { description: "已完成项目" }
+      outdated: { description: "过期资源" }
+  
+  mocs:
+    path: "90 MOCs"
+    description: "主题地图（导航页）"
+  
+  system:
+    path: "99 System"
+    description: "系统文件：模板、配置、脚本"
+    subdirs:
+      templates: { description: "标准模板" }
+      scripts: { description: "自动化脚本" }
+
+# 智能分类规则（优先级从高到低）
+classification_rules:
+  - name: "Skill Issue"
+    priority: 100
+    patterns: ["错误", "失败", "异常", "bug", "问题", "故障", "报错", "timeout", "locked"]
+    target: "20 Resources.skills.{skill_name}.issues"
+    template: "issue-resolution"
+    description: "技能运行遇到的问题"
+  
+  - name: "Skill Guide"
+    priority: 90
+    patterns: ["如何", "步骤", "方法", "教程", "指南", "安装", "配置", "部署"]
+    target: "20 Resources.skills.{skill_name}.guides"
+    template: "skill-guide"
+    description: "技能的使用方法"
+  
+  - name: "Skill Improvement"
+    priority: 80
+    patterns: ["优化", "改进", "提升", "加速", "调优", "性能"]
+    target: "20 Resources.skills.{skill_name}.improvements"
+    template: "improvement"
+    description: "技能的优化记录"
+  
+  - name: "Account"
+    priority: 70
+    patterns: ["账号", "密码", "用户名", "登录", "注册", "2FA", "token", "key"]
+    target: "10 Assets.accounts"
+    template: "asset-entry"
+    description: "账号信息"
+  
+  - name: "Subscription"
+    priority: 70
+    patterns: ["订阅", "付费", "到期", "年费", "月费", "pro", "license"]
+    target: "10 Assets.subscriptions"
+    template: "asset-entry"
+    description: "订阅服务"
+  
+  - name: "GitHub Project"
+    priority: 60
+    patterns: ["github.com", "gitlab.com", "开源项目", "仓库"]
+    target: "20 Resources.projects"
+    template: "resource-entry"
+    description: "开源项目/仓库"
+  
+  - name: "Tool"
+    priority: 50
+    patterns: ["工具", "软件", "CLI", "GUI", "app", "插件"]
+    target: "20 Resources.tools"
+    template: "resource-entry"
+    description: "软件工具"
+  
+  - name: "Thought"
+    priority: 40
+    patterns: ["想法", "灵感", "想到", "觉得", "可能", "也许"]
+    target: "30 Thoughts.fleeting"
+    template: "thought-entry"
+    description: "闪念想法"
+  
+  - name: "Project"
+    priority: 30
+    patterns: ["开始", "计划", "项目", "任务", "目标"]
+    target: "40 Projects.{project_name}"
+    template: "project-index"
+    description: "项目计划"
+  
+  - name: "Article"
+    priority: 20
+    patterns: ["http", "https", "文章", "博客", "阅读", "分享"]
+    target: "20 Resources.articles"
+    template: "resource-entry"
+    description: "文章/链接"
+
+# 变更记录配置
+change_log:
+  required: true
+  format: |
+    ---
+    ## 变更记录
+    
+    - **时间**: {timestamp}
+    - **来源**: {source}
+    - **类型**: {change_type}
+    - **修改内容**: {description}
+    - **PKM 位置**: {file_path}
+  
+  types:
+    - "新增"
+    - "追加"
+    - "更新"
+    - "废弃"
+  
+  sources:
+    - "微信 Hermes"
+    - "飞书 Hermes"
+    - "CLI Hermes"
+    - "OpenClaw"
+    - "用户手动"
+
+# 冲突解决策略
+conflict_resolution:
+  strategy: "user_priority"
+  rules:
+    - "用户手动修改优先级最高"
+    - "自动同步默认使用追加模式"
+    - "更新已有内容必须明确标记类型"
+    - "冲突发生时记录到文档待处理区域"
+
+# 同步配置
+sync:
+  enabled: true
+  auto_sync: true
+  conflict_check: true
+  change_log_required: true
+  
+# 多系统标识
+system_identifiers:
+  hermes_wechat: "微信 Hermes"
+  hermes_feishu: "飞书 Hermes"
+  hermes_cli: "CLI Hermes"
+  openclaw: "OpenClaw"
+  manual: "用户手动"
